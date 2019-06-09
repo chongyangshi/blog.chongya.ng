@@ -1,4 +1,4 @@
-Title: The North Remembers
+Title: Chronical Consistency 
 Date: 2018-12-02 16:45
 Category: Journal
 
@@ -6,6 +6,6 @@ Turn the clock back a few weeks (months?), a friend from my past reminded me in 
 
 The past few months have been an interesting period of time for this country: a once-in-a-generation political change is dragging itself along like a horse feasted on a bucket of fermented grain, worrying the passers-by that it might fall over at any moment. I am certainly cautiously optimistic about the chances, as the passing of August not only marked my seventh year in this country, but also the first proper year of me [not being a student of some kind](https://scy.email/#PROFILE). 
 
-This is also not the first time I "abused" this quote from one of my favourite book series (and TV show), but I have indeed been in the fearful north (York) the last few days, reconnecting with the past. Consequentially, here's a photo of Knaresborough with an atrocious filter:
+In a fruitless effort of combating the monotonic nature of chronical flows, I have indeed been in the fearful north (York) the last few days, reconnecting with the past. Consequentially, here's a photo of Knaresborough with an atrocious filter:
 
 ![Knaresborough-upon-Nidd?](https://images.ebornet.com/uploads/big/ef24ac1db0c2a3e0fbe844992eac72b7.jpeg)
