@@ -11,15 +11,15 @@ It took some trial and errors over a couple weeks of time, but eventually I was 
 Two servers are used in the setup:
 
 * A bare-metal Debian **host server** running QEMU-KVM (`libvirt`), which in turn runs a number Ubuntu guest VMs, each running a Kubernetes master or worker node, or a [GlusterFS]([https://www.gluster.org/](https://www.gluster.org/)) replicated storage node. 
-  * The host server runs former VPS host-grade hardware, and therefore was fairly inexpensive to lease from the right provider, but yet still pretty powerful enough to run my cluster.
-  * The Kubernetes node network (`10.100.0.0.25`) is segregated from the public internet.
-  * Two IP addresses are used, one for the exclusive use of ingress to web services running in Kubernetes (`10.100.0.128/25`), and another for host maintenance and protected `kubectl` access.
-  * Ubuntu guest images were built with [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) and runs in DHCP mode.
+    * The host server runs former VPS host-grade hardware, and therefore was fairly inexpensive to lease from the right provider, but yet still pretty powerful enough to run my cluster.
+    * The Kubernetes node network (`10.100.0.0.25`) is segregated from the public internet.
+    * Two IP addresses are used, one for the exclusive use of ingress to web services running in Kubernetes (`10.100.0.128/25`), and another for host maintenance and protected `kubectl` access.
+    * Ubuntu guest images were built with [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) and runs in DHCP mode.
 
 * An **auxiliary server**, a low-cost yet fairly powerful virtual machine hosted with a different provider.
-  * It was originally intended to be set up as an off-site Kubernetes worker node connected into the main cluster via WireGuard. While I managed to get kubelet joining the master node successfully and its [Calico](https://www.projectcalico.org/) node reaching the main cluster network, I ran into some weird issues with [send/receive offloading](https://en.wikipedia.org/wiki/Large_send_offload) causing longer-than-MTU pod traffic packets to be dropped on Calico over WireGuard, and had to abandon this idea.
-  * If you know why this happens, and how to fix it, please do [get in touch](mailto:hello@scy.email) -- I'm intrigued.
-  * The auxiliary server runs workloads which are tricky to containerise, including my private Docker build environment and container repository (major `iptables` screw-up) and MySQL for backing some legacy projects. 
+    * It was originally intended to be set up as an off-site Kubernetes worker node connected into the main cluster via WireGuard. While I managed to get kubelet joining the master node successfully and its [Calico](https://www.projectcalico.org/) node reaching the main cluster network, I ran into some weird issues with [send/receive offloading](https://en.wikipedia.org/wiki/Large_send_offload) causing longer-than-MTU pod traffic packets to be dropped on Calico over WireGuard, and had to abandon this idea.
+    * If you know why this happens, and how to fix it, please do [get in touch](mailto:hello@scy.email) -- I'm intrigued.
+    * The auxiliary server runs workloads which are tricky to containerise, including my private Docker build environment and container repository (major `iptables` screw-up) and MySQL for backing some legacy projects. 
 
 * [WireGuard]([https://www.wireguard.com/](https://www.wireguard.com/)) runs as a virtualised bridge between this and the auxiliary server hosted elsewhere.
  
@@ -32,8 +32,8 @@ Some infrastructural notes for the setup:
 * Setting up Kubernetes [master and worker nodes](https://kubernetes.io/docs/setup/independent/install-kubeadm/) with Docker as [container runtime](https://kubernetes.io/docs/setup/cri/), [joining them together](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network), and [wiring their pods together](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#pod-network) with Calico was surprisingly easy, as the bare-metal setup process is very mature.
 
 * The biggest pain point of running a bare-metal setup of Kubernetes is the lack of a ready-made load-balancer and ingress solution, such as [ELB/NLB]([https://aws.amazon.com/elasticloadbalancing/](https://aws.amazon.com/elasticloadbalancing/)) available when your cluster runs on AWS EC2. 
-  * Instead, I used [MetalLB](https://metallb.universe.tf/tutorial/layer2/) on Layer 2 routing mode to front the Cluster IP of an NGINX internal ingress service, with MetalLB's own ingress subnet forwarded via NAT to an external ingress IP. 
-  * The BGP mode of MetalLB would be really nice to have, but it is unfortunately not compatible with Calico's BGP setup. 
+    * Instead, I used [MetalLB](https://metallb.universe.tf/tutorial/layer2/) on Layer 2 routing mode to front the Cluster IP of an NGINX internal ingress service, with MetalLB's own ingress subnet forwarded via NAT to an external ingress IP. 
+    * The BGP mode of MetalLB would be really nice to have, but it is unfortunately not compatible with Calico's BGP setup. 
 
 * I use [GlusterFS](https://www.gluster.org/) as a replicated storage backend, which in this setup is not really redundant since they run on the same physical hard drive of the host server. But in a more budget-accommodating setup this can be easily distributed. GlusterFS is wired into Kubernetes as an endpoint for persistent volumes. 
 
