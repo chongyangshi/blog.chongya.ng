@@ -12,7 +12,7 @@ Two servers are used in the setup:
 
 * A bare-metal Debian **host server** running QEMU-KVM (`libvirt`), which in turn runs a number Ubuntu guest VMs, each running a Kubernetes master or worker node, or a [GlusterFS]([https://www.gluster.org/](https://www.gluster.org/)) replicated storage node. 
     * The host server runs former VPS host-grade hardware, and therefore was fairly inexpensive to lease from the right provider, but yet still pretty powerful enough to run my cluster.
-    * The Kubernetes node network (`10.100.0.0.25`) is segregated from the public internet.
+    * The Kubernetes node network (`10.100.0.0/25`) is segregated from the public internet.
     * Two IP addresses are used, one for the exclusive use of ingress to web services running in Kubernetes (`10.100.0.128/25`), and another for host maintenance and protected `kubectl` access.
     * Ubuntu guest images were built with [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) and runs in DHCP mode.
 
