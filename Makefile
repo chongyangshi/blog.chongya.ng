@@ -27,7 +27,10 @@ regenerate: clean
 publish:
 	$(PELICAN) $(INPUTDIR) -o $(OUTPUTDIR) -s $(PUBLISHCONF) $(PELICANOPTS)
 
-docker-build: publish
+hack:
+	echo '\n\narticle img { width: 100%; } \n' >> $(BASEDIR)/output/theme/css/main.css	
+
+docker-build: publish hack
 	docker build -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} .
 
 docker-pull:
