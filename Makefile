@@ -29,6 +29,7 @@ publish:
 
 hack:
 	echo '\n\narticle img { width: 100%; } \n' >> $(BASEDIR)/output/theme/css/main.css	
+	rm $(BASEDIR)/output/theme/css/pygment.css
 
 docker-build: publish hack
 	docker build -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} .

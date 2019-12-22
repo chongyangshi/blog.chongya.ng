@@ -10,9 +10,9 @@ These characteristics make it ideal to use WireGuard for tunnelling Calico traff
 
 Under this low-budget use-case, in addition to operating a really cheap dedicated server running a self-managed KVM hypervisor (where most of my Kubernetes cluster lives), I'm also always on the look out for high-resource, low-cost virtual private server (VPS) providers which are reputable. After renting VPS from one of these providers, the VPS can be used as a satellite server running a Kubernetes node on its own, connected to the rest of the cluster through WireGuard.
 
-To put this strategy into perspective, while a `c4.large` AWS EC2 instance (a minimum spec for Kubernetes nodes) with [comitted savings plan pricing](https://aws.amazon.com/savingsplans/pricing/) costs more than $1000 year (before EBS and egress traffic cost are even factored in),  my satellite servers with the same resource specification costs me between $40 and $80 a year each, with generous amounts of local storage and egress traffic included.
+To put this strategy into perspective, while a `c4.large` AWS EC2 instance (a minimum spec for Kubernetes nodes) with [committed savings plan pricing](https://aws.amazon.com/savingsplans/pricing/) costs more than $1000 year (before EBS and egress traffic cost are even factored in),  my satellite servers with the same resource specification costs me between $40 and $80 a year each, with generous amounts of local storage and egress traffic included.
 
-By distributing workloads out between different providers, without losing the benefits of runing all workloads within one logical cluster, I can effectively implement the concept of "availability zones" provided by [IaaS]([https://en.wikipedia.org/wiki/Infrastructure_as_a_service](https://en.wikipedia.org/wiki/Infrastructure_as_a_service)) equivalent to those offered by providers like AWS. Hosting workloads across multiple availability zones provide redundancy between physical sites of infrastructures, while still allowing private network traffic to flow in-between.
+By distributing workloads out between different providers, without losing the benefits of running all workloads within one logical cluster, I can effectively implement the concept of "availability zones" provided by [IaaS]([https://en.wikipedia.org/wiki/Infrastructure_as_a_service](https://en.wikipedia.org/wiki/Infrastructure_as_a_service)) equivalent to those offered by providers like AWS. Hosting workloads across multiple availability zones provide redundancy between physical sites of infrastructures, while still allowing private network traffic to flow in-between.
 
 Of course, the hypervisor hardware running my budget VMs will not be as reliable as those of AWS EC2 nodes, and these budget providers, despite reasonable reputation of longevity, are still more likely to suddenly go bankrupt compared to AWS. The purpose of my exercise is to operate a bare-metal cluster as cheaply as possible. 
 
@@ -39,7 +39,7 @@ Kubernetes cluster management traffic (running on node network, which is a combi
 
 This process also involves overcoming a common MTU issue when tunnelling encapsulated packets, which would have caused packets larger than MTU to be dropped incorrectly. To resolve this, I recommend:
 
-* Make all physical ethernet interfaces, and virtualised ethernet interfaces of satellite workers use MTU = 1500.
+* Make all physical ethernet interfaces, and virtualized ethernet interfaces of satellite workers use MTU = 1500.
 * Setting `MTU = 1360` in your `[interface]` configuration of all WireGuard installations
 * Configure Calico to use MTU = 1300:
 
@@ -136,13 +136,13 @@ What's happening in the above is as followed:
 * A pod running on Satellite Server 2 (`172.16.16.3`) tries to make RPC calls to two pods with identical workloads (`192.168.1.7`, `192.168.2.18`) running on Worker 1 (`10.100.0.4`) and Worker 2 (`10.100.0.40`) respectively.
 * Both RPC calls were made with encapsulated IP-in-IP packets.
 * Encapsulation means that the outer packet headers have source and destination IPs as the IPs of the source (`172.16.16.3`) and destination nodes (`10.100.0.4` or `10.100.0.40`).
-* And the inner headers contain virtualised Calico pod IP addresses, with which pods are identified in the service mesh.
+* And the inner headers contain virtualized Calico pod IP addresses, with which pods are identified in the service mesh.
 * Calico pod on each node knows which local pod is allocated which pod IP, while the pod IP of the target workload is obtained by querying or processing through a service proxy, such as [Envoy](https://www.envoyproxy.io/) or simply the integrated `kube-proxy`.
 * Calico on the source node will encapsulated the packet with its source and destination nodes.
 * Calico on the destination node will unencapsulate the packet, identify the target pod IP, and route traffic towards the local virtual Calico interface of that pod.
 * However, only the packets to `192.168.1.7` pod were delivered to target node's Calico (`10.100.0.4`) at all, **while packets to `192.168.2.18` (last three entries in the dump) on node `10.100.0.40` were "dropped by interface" and never routed to the destination**.
 
-Because encapsulated packets to both `10.100.0.4` and `10.100.0.40` have gone through NAT performed by the WireGuard Terminal instance, and both requests happened nearly simutaneously, it is very unlikely NAT is at fault here; but rather something strange within Calico. Note the dropped packets on the interface:
+Because encapsulated packets to both `10.100.0.4` and `10.100.0.40` have gone through NAT performed by the WireGuard Terminal instance, and both requests happened nearly simultaneously, it is very unlikely NAT is at fault here; but rather something strange within Calico. Note the dropped packets on the interface:
 
     $ ifconfig wg0
     wg0: flags=209<UP,POINTOPOINT,RUNNING,NOARP>  mtu 1360
@@ -161,11 +161,26 @@ And when switching WireGuard into live debug mode via `echo "module wireguard -p
 
 Where `xx.xx.xx.xx` is the public IP serving as the endpoint of the satellite server.
 
-I have observed this kind of packet drops happening *sporadically*, in *either* diretion encapsulated packets flow, on *all* internet-facing WireGuard interfaces wthin the cluster. Encapsulated packets can be dropped while standard TCP packets pass through the same link in the same direction just fine.
+I have observed this kind of packet drops happening *sporadically*, in *either* direction encapsulated packets flow, on *all* internet-facing WireGuard interfaces within the cluster. Encapsulated packets can be dropped while standard TCP packets pass through the same link in the same direction just fine.
 
-Because my cluster has a very low volume of inter-service RPC traffic, I noticed that this issue tends to surface after a period during which no encapsulated packets passed through (Calico's keep-alive BGP packets are not encapsulated themselves, and therefore no encapsulated packets happen in the background). I am not very familiar with inner workings of Linux kernel and encapsulated traffic, so if you have any idea what might be happening here, please dlet me know.
+Because my cluster has a very low volume of inter-service RPC traffic, I noticed that this issue tends to surface after a period during which no encapsulated packets passed through (Calico's keep-alive BGP packets are not encapsulated themselves, and therefore no encapsulated packets happen in the background). I am not very familiar with inner workings of Linux kernel and encapsulated traffic, so if you have any idea what might be happening here, please det me know.
 
-As a result, I have written  and deployed the DaemonSet [Wylis](https://github.com/icydoge/wylis) as a ~hack~ workaround to both generate background encapsulated packets to "hold the door", and to generate useful metrics for me to monitor the performance of tunnelled packets.
+### Solution: Hold the door
 
-Initial results suggest the failure condition for encapsulated packets have all but disappeared. I will wait for a longer period of metrics to accumulate, and updated observations here soon.
+Because in-built Kubernetes health checks are always uni-directional, for this particular WireGuard problem where encapsulated packets can be randomly blocked in either direction, it was not sufficient to rely on health checks to keep the paths open. 
+
+As a result, I wrote and deployed a Go microservice [Wylis](https://github.com/icydoge/wylis) as a <del>hack</del> workaround. Wylis runs as a Kubernetes Daemonset, which means that it runs as a pod on every node in the cluster. It does the following things:
+
+* Periodically polls Wylis pods on all other nodes with fresh Calico TCP connections to keep the paths open
+* Emits [Prometheus](https://prometheus.io) metrics to help measuring fine-grained request success and latency across the cluster
+* Periodically updates its knowledge of other Wylis pods through in-cluster Kubernetes API 
+
+Following initial running with a polling period of 10 seconds, metrics emitted suggest that Wylis is working very well in keeping RPC traffic reachable across tunnelled networks:
+
+![https://images.ebornet.com/uploads/big/5bce5df617258d7db54c04f9a2927e6b.png](Request successes and failures)
+_No requests with encapsulated packets timed out when travelling through WireGuard under periodic polling._
+
+![https://images.ebornet.com/uploads/big/951795a8bf78b9e3b42228952a6450eb.png](Request timings)
+_Polling requests provide useful timing data on inter-node RPCs._
+
 
