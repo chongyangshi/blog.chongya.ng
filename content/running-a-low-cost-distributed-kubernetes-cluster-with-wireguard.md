@@ -177,10 +177,12 @@ As a result, I wrote and deployed a Go microservice [Wylis](https://github.com/i
 
 Following initial running with a polling period of 10 seconds, metrics emitted suggest that Wylis is working very well in keeping RPC traffic reachable across tunnelled networks:
 
-![https://images.ebornet.com/uploads/big/5bce5df617258d7db54c04f9a2927e6b.png](Request successes and failures)
+![Request successes and failures](https://images.ebornet.com/uploads/big/5bce5df617258d7db54c04f9a2927e6b.png)
+
 _No requests with encapsulated packets timed out when travelling through WireGuard under periodic polling._
 
-![https://images.ebornet.com/uploads/big/951795a8bf78b9e3b42228952a6450eb.png](Request timings)
+![Request timings](https://images.ebornet.com/uploads/big/951795a8bf78b9e3b42228952a6450eb.png)
+
 _Polling requests provide useful timing data on inter-node RPCs._
 
 
