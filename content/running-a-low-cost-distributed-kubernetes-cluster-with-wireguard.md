@@ -19,9 +19,14 @@ Of course, the hypervisor hardware running my budget VMs will not be as reliable
 ### Architecture
 ![Multi-Site Cluster Network](https://images.ebornet.com/uploads/big/df70988d0dedf2f7130702a04783a4db.png)
 
-This setup represents a mix of one local private network containing several nodes, connected to satellite nodes hosted elsewhere by WireGuard. WireGuard runs as a separate VM instance (`10.100.0.88` with DNAT ingress for the WireGuard port on the hypervisor host) responsible for NAT'ing packets traversing networks. On satellite servers running Kubernetes nodes, it is necessary for each of them to run WireGuard locally, as we don't want any Kubernetes cluster management traffic to go over the internet without additional protection.
+This setup represents a mix of one local private network containing several nodes, connected to satellite nodes hosted elsewhere by WireGuard. WireGuard runs as a separate VM instance (`10.100.0.88` with DNAT ingress for the WireGuard port on the hypervisor host) responsible for NAT'ing packets traversing to and from satellite servers. 
 
-While it is theoretically possible to not NAT at all and instead run WireGuard on all nodes in `10.100.0.0/25`, for Kubernetes cluster management to work, this alternative will require all nodes in this subnet to hold a full view of all WireGuard installations within the cluster, including each installation's public internet endpoint and their internal IP). This quickly becomes unmanageable across several local networks containing nodes as well as satellite nodes. 
+On satellite servers running Kubernetes nodes, it is necessary for each of them to run WireGuard locally, as we don't want any Kubernetes control plane (cluster management) traffic to go over the internet without additional protection. Additionally, explicit endpoint configuration of all other peers in all satellite servers are unfortunately necessary, for the following reasons:
+
+- Unlike ordinary control plane traffic using TCP, Calico BGP messages will not work under NAT if passed via `10.100.0.88`;
+- Passing traffic through `10.100.0.88` between two satellite servers will also increase latency over the internet.
+
+While it is theoretically possible to not NAT at all and instead run WireGuard on all nodes in `10.100.0.0/25`, for Kubernetes control plane to work, this alternative will require all nodes in this subnet to hold a full view of all WireGuard installations within the cluster, including each installation's public internet endpoint and their internal IP). This quickly becomes unmanageable across several local networks containing nodes as well as satellite nodes. 
 
 Instead, in the setup adopted, to connect any additional local network (say, `10.101.0.0/25`) into the cluster, it is only necessary to create a new WireGuard Terminal instance in the new network, and update the WireGuard configurations of terminal instances of existing networks, in addition to updating any satellite servers running discrete Kubernetes nodes as shown.
 
