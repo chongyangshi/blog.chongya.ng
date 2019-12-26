@@ -144,11 +144,11 @@ What's happening in the above is as followed:
 * Encapsulation means that the outer packet headers have source and destination IPs as the IPs of the source (`172.16.16.3`) and destination nodes (`10.100.0.4` or `10.100.0.40`).
 * And the inner headers contain virtualized Calico pod IP addresses, with which pods are identified in the service mesh.
 * Calico pod on each node knows which local pod is allocated which pod IP, while the pod IP of the target workload is obtained by querying or processing through a service proxy, such as [Envoy](https://www.envoyproxy.io/) or simply the integrated `kube-proxy`.
-* Calico on the source node will encapsulated the packet with its source and destination nodes.
-* Calico on the destination node will unencapsulate the packet, identify the target pod IP, and route traffic towards the local virtual Calico interface of that pod.
+* Calico on the source node has encapsulated the packet with its source and destination nodes.
+* Calico on the destination node is meant to unencapsulate the packet, identify the target pod IP, and route traffic towards the local virtual Calico interface of that pod.
 * However, only the packets to `192.168.1.7` pod were delivered to target node's Calico (`10.100.0.4`) at all, **while packets to `192.168.2.18` (last three entries in the dump) on node `10.100.0.40` were "dropped by interface" and never routed to the destination**.
 
-Because encapsulated packets to both `10.100.0.4` and `10.100.0.40` have gone through NAT performed by the WireGuard Terminal instance, and both requests happened nearly simultaneously, it is very unlikely NAT is at fault here; but rather something strange within Calico. Note the dropped packets on the interface:
+Because encapsulated packets to both `10.100.0.4` and `10.100.0.40` have gone through NAT performed by the WireGuard Terminal instance, and both requests happened nearly simultaneously, it is not a typical NAT-related fault I could recognise; but rather due to some strange interaction between inner workings of WireGuard and encapsulated packets passing through. Note the dropped packets on the interface represent dropped responses to the four retries of the failed request in the tcpdump:
 
     $ ifconfig wg0
     wg0: flags=209<UP,POINTOPOINT,RUNNING,NOARP>  mtu 1360
