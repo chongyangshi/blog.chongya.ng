@@ -1,5 +1,5 @@
 .PHONY: docker-build
-ALPINE_VERSION := 3.9
+ALPINE_VERSION := 3.11
 SVC := web-blog-scy-email
 COMMIT := $(shell git log -1 --pretty='%h')
 
