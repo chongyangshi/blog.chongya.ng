@@ -23,9 +23,11 @@ This setup represents a mix of one local private network containing several node
 
 On satellite servers running Kubernetes nodes, it is necessary for each of them to run WireGuard locally, as we don't want any Kubernetes control plane (cluster management) traffic to go over the internet without additional protection. 
 
-NAT and local BGP setups (as used by Calico on TCP 179) generally cause weird behaviours. I discovered that BGP messages _traversing_ networks work fine under local NAT rules of any WireGuard terminal instances they pass through, so long as the terminal instance(s) belong to either the source or the destination network. However, if the terminal instance is used as a "bridge" peer for two other WireGuard peers not connected via their own endpoints, Calico (or rather, bird) will complain that the source of BGP message was from the incorrectly masquaraded bridge peer, due to NAT on the bridge peer; and refuse to update local routes correctly. Therefore, it is still necessary for WireGuard interfaces on all networks and discrete satellite servers to have direct paths to each other for peering to work; which requires all of these interfaces to have all other interfaces configured as direct WireGuard peers. This introduces a menial amount of reconfiguration of all WireGuard interfaces each time a new network (or discrete satellite server) is added into the cluster.
+Normally, connecting several networks together requires one or more bridge servers running NAT. However, NAT and local BGP setups (as used by Calico on TCP 179) together generally cause weird behaviours. I discovered that BGP messages _traversing_ networks work fine under local NAT rules of any WireGuard terminal instances they pass through, so long as the terminal instance(s) belong to either the source or the destination network. However, if the terminal instance is used as a "bridge" peer for two other WireGuard peers not connected via their own endpoints, Calico (or rather, bird) will complain that the source of BGP message was from the incorrectly masquaraded bridge peer, due to NAT on the bridge peer; and refuse to update local routes correctly. 
 
-**Update**: I have now removed NAT in both directions from all bridge peers, and it seems that both control plane and container network traffic work fine on just static routes to all other internal subnets. Manually configuring static routes on all nodes is still a pain, but not using NAT between internal subnets helps avoiding many other problems.
+Therefore, it is still necessary for WireGuard interfaces on all networks and discrete satellite servers to have direct paths to each other for peering to work; which requires all of these interfaces to have all other interfaces configured as direct WireGuard peers. This introduces a menial amount of reconfiguration of all WireGuard interfaces each time a new network (or discrete satellite server) is added into the cluster.
+
+This setup does however bring benefits, as NAT will not be required in either direction all bridge peers. Through observation, it seems that both control plane and container network traffic work fine on just static routes to all other internal subnets. Manually configuring static routes on all nodes is still a pain, but not using NAT between internal subnets helps avoiding many other problems.
 
 While it is theoretically possible to not use multiple internal subnets at all, and instead run WireGuard on all nodes in `10.100.0.0/25`, for Kubernetes control plane to work, this alternative will require all nodes in this subnet to hold a full view of all WireGuard installations within the cluster, including each installation's public internet endpoint and their internal IP); additionally any WireGuard instances running within local networks will need to have a DNAT port on the hypervisor's ingress interface. This quickly becomes unmanageable, not to mention increased points of failures. 
 
@@ -190,3 +192,14 @@ _No requests with encapsulated packets timed out when travelling through WireGua
 _Polling requests provide useful timing data on inter-node RPCs._
 
 
+### Security Warning
+
+By default [kubelet server](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) and Kubernetes [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) will listen on the external-facing network interface of the host instance. Normally, this is okay as Kubernetes nodes are not expected to run with public IPs, but this is not true for our satellite servers, which are VPS servers with public IPs connected into the cluster via WireGuard. Therefore, these ports will be exposed on the public-facing network interface (eth0 or similar) unless iptables rules on these interfaces are set to deny ingress by default.
+
+While kubelet server has authentication, your NodePorts may not. So it is very important that you allow system services running on the host server only to be accessed via the public internet. This looks something like the following:
+
+    iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+    iptables -A INPUT -i eth0 -p tcp -m multiport --dports 22,9301 -j ACCEPT  # SSH and some other system service
+    iptables -A INPUT -i eth0 -p udp -m multiport --dports 7000 -j ACCEPT     # WireGuard ingress port 
+    iptables -A INPUT -i eth0 -p udp -j DROP
+    iptables -A INPUT -i eth0 -p tcp -j DROP
