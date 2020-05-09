@@ -27,7 +27,7 @@ Normally, connecting several networks together requires one or more bridge serve
 
 Therefore, it is still necessary for WireGuard interfaces on all networks and discrete satellite servers to have direct paths to each other for peering to work; which requires all of these interfaces to have all other interfaces configured as direct WireGuard peers. This introduces a menial amount of reconfiguration of all WireGuard interfaces each time a new network (or discrete satellite server) is added into the cluster.
 
-This setup does however bring benefits, as NAT will not be required in either direction all bridge peers. Through observation, it seems that both control plane and container network traffic work fine on just static routes to all other internal subnets. Manually configuring static routes on all nodes is still a pain, but not using NAT between internal subnets helps avoiding many other problems.
+This setup does however bring benefits, as NAT will not be required in either direction on any bridge peers. Through observation, both control plane and container network traffic work fine on just static routes to all other internal subnets. Manually configuring static routes on all nodes is still a pain, but not using NAT between internal subnets helps avoiding many other problems.
 
 While it is theoretically possible to not use multiple internal subnets at all, and instead run WireGuard on all nodes in `10.100.0.0/25`, for Kubernetes control plane to work, this alternative will require all nodes in this subnet to hold a full view of all WireGuard installations within the cluster, including each installation's public internet endpoint and their internal IP); additionally any WireGuard instances running within local networks will need to have a DNAT port on the hypervisor's ingress interface. This quickly becomes unmanageable, not to mention increased points of failures. 
 
@@ -194,9 +194,9 @@ _Polling requests provide useful timing data on inter-node RPCs._
 
 ### Security Warning
 
-By default [kubelet server](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) and Kubernetes [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) will listen on the external-facing network interface of the host instance. Normally, this is okay as Kubernetes nodes are not expected to run with public IPs, but this is not true for our satellite servers, which are VPS servers with public IPs connected into the cluster via WireGuard. Therefore, these ports will be exposed on the public-facing network interface (eth0 or similar) unless iptables rules on these interfaces are set to deny ingress by default.
+By default [kubelet server](https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/) and Kubernetes [NodePorts](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport) will listen on _all_ interfaces on the node, including external-facing interfaces. Normally, this is okay, as Kubernetes nodes are not expected to run with public IPs. But this is not true for our satellite servers, which are VPS servers with public IPs connected into the cluster via WireGuard. Therefore, these ports will be directly exposed on the public-facing network interface (eth0 or similar) unless iptables rules on these interfaces are set to deny ingress by default.
 
-While kubelet server has authentication, your NodePorts may not. So it is very important that you allow system services running on the host server only to be accessed via the public internet. This looks something like the following:
+While kubelet server has authentication, your NodePorts may not. So it is extra important that you only allow system services running on the host server to be accessed via the public internet, but not any NodePorts or kubelet ports. The corresponding rules look something like the following:
 
     iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
     iptables -A INPUT -i eth0 -p tcp -m multiport --dports 22,9301 -j ACCEPT  # SSH and some other system service
