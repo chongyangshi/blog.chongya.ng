@@ -38,13 +38,13 @@ Some infrastructural notes for the setup:
 
 For each of my existing personal projects, I wrote `Dockerfile`s and supporting `Makefile`s to enable them to be containerised. These mostly run with three replicas for load-balancing. These projects include:
 
-* [My personal page](https://scy.email) which is now served by an [NGINX/Alpine container](https://github.com/icydoge/scy.email) deployment.
+* [My personal page](https://scy.email) which is now served by an [NGINX/Alpine container](https://github.com/chongyangshi/scy.email) deployment.
 
-* [My personal blog](https://blog.scy.email) (the site you are reading now) which is now served by another [NGINX/Alpine container](https://github.com/icydoge/blog.scy.email) deployment.
+* [My personal blog](https://blog.scy.email) (the site you are reading now) which is now served by another [NGINX/Alpine container](https://github.com/chongyangshi/blog.scy.email) deployment.
 
-* The [documentation site](https://covertmark.com) for my Master's dissertation project CovertMark, which is now served by yet another [NGINX/Alpine container](https://github.com/icydoge/CovertMark/tree/master/doc) deployment.
+* The [documentation site](https://covertmark.com) for my Master's dissertation project CovertMark, which is now served by yet another [NGINX/Alpine container](https://github.com/chongyangshi/CovertMark/tree/master/doc) deployment.
 
-* The front-end and RESTful API backend of my personal image sharing service [Yronwood](https://github.com/icydoge/yronwood/), which I wrote from scratch in Golang to replace the old PHP/MySQL-based [Lychee](https://github.com/LycheeOrg/Lychee/) that was way too painful to containerise.
+* The front-end and RESTful API backend of my personal image sharing service [Yronwood](https://github.com/chongyangshi/yronwood/), which I wrote from scratch in Golang to replace the old PHP/MySQL-based [Lychee](https://github.com/LycheeOrg/Lychee/) that was way too painful to containerise.
 
 * Some static and PHP sites I host for family and friends on a _pro bono_ basis.
 

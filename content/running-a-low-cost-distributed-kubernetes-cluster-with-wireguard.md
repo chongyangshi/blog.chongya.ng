@@ -175,7 +175,7 @@ Because my cluster has a very low volume of inter-service RPC traffic, I noticed
 
 Because in-built Kubernetes health checks are always uni-directional, for this particular WireGuard problem where encapsulated packets can be randomly blocked in either direction, it was not sufficient to rely on health checks to keep the paths open. 
 
-As a result, I wrote and deployed a Go microservice [Wylis](https://github.com/icydoge/wylis) as a <del>hack</del> workaround. Wylis runs as a Kubernetes Daemonset, which means that it runs as a pod on every node in the cluster. It does the following things:
+As a result, I wrote and deployed a Go microservice [Wylis](https://github.com/chongyangshi/wylis) as a <del>hack</del> workaround. Wylis runs as a Kubernetes Daemonset, which means that it runs as a pod on every node in the cluster. It does the following things:
 
 * Periodically polls Wylis pods on all other nodes with fresh Calico TCP connections to keep the paths open
 * Emits [Prometheus](https://prometheus.io) metrics to help measuring fine-grained request success and latency across the cluster
