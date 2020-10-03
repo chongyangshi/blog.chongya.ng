@@ -8,12 +8,12 @@ Somewhat notoriously known as a competitive person, it had been a regret of mine
 
 Being on the graduate side of Cambridge means that many of the ancient or arcane traditions and rules do not apply to you. Some would argue that this makes the Cambridge experience less authentic, but when one really just wants to do decent research and talk to very academically-capable people, that side of Cambridge is mostly there for vanity. In fact, from my limited interactions with undergraduates, the typical public perception of snobbish, privately-educated young adults was an exception here rather than the norm. With three short eight-week terms, timetabled teaching sessions are tight and examinations are harsh. The undergraduates are incredibly hard-working, and it is not uncommon to see self-study schedules tacked to their library stalls running from 8 am to 10 pm every day. 
 
-![Undergraduate students were the ones hit by the strikes the worst in Cambridge.](https://images.ebornet.com/uploads/big/b269375419f965671e45a791315b840b.jpg)
+![Undergraduate students were the ones hit by the strikes the worst in Cambridge.](https://i.doge.at/uploads/big/b269375419f965671e45a791315b840b.jpg)
 
 On a related side note, many Cambridge students are very good at self-parodying. One of the best I overheard in college was a student signing documents to cash some savings bonds, while chatting with his friend about how "that was one of the most Cambridge things to do". At end of the day, when people don't take themselves *that* seriously, this academic environment is just like any other in the country.
 
-![Stephen Hawking's funeral procession from a distance.](https://images.ebornet.com/uploads/big/8af349c355cfe6a92939f94d3ba920b0.jpg)
+![Stephen Hawking's funeral procession from a distance.](https://i.doge.at/uploads/big/8af349c355cfe6a92939f94d3ba920b0.jpg)
 
 So what would be my own conclusion for my brief time here? It is incredibly difficult to find an environment that values hard work and tries its best to reward you accordingly. Cambridge is not yet there, as far as I am concerned, but it is doing reasonably well to get there, and far ahead of many other UK universities.
 
-![These glasses are very expensive.](https://images.ebornet.com/uploads/big/9e51ae13105b43c591183061a7e3a7c8.jpg)
+![These glasses are very expensive.](https://i.doge.at/uploads/big/9e51ae13105b43c591183061a7e3a7c8.jpg)

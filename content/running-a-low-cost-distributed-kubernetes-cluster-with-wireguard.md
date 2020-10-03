@@ -17,7 +17,7 @@ By distributing workloads out between different providers, without losing the be
 Of course, the hypervisor hardware running my budget VMs will not be as reliable as those of AWS EC2 nodes, and these budget providers, despite reasonable reputation of longevity, are still more likely to suddenly go bankrupt compared to AWS. The purpose of my exercise is to operate a bare-metal cluster as cheaply as possible. 
 
 ### Architecture
-![Multi-Site Cluster Network](https://images.ebornet.com/uploads/big/df70988d0dedf2f7130702a04783a4db.png)
+![Multi-Site Cluster Network](https://i.doge.at/uploads/big/df70988d0dedf2f7130702a04783a4db.png)
 
 This setup represents a mix of one local private network containing several nodes, connected to satellite nodes hosted elsewhere by WireGuard. WireGuard runs as a separate VM instance (`10.100.0.88` with DNAT ingress for the WireGuard port on the hypervisor host) responsible for NAT'ing packets traversing to and from satellite servers. 
 
@@ -183,11 +183,11 @@ As a result, I wrote and deployed a Go microservice [Wylis](https://github.com/c
 
 Following initial running with a polling period of 10 seconds, metrics emitted suggest that Wylis is working very well in keeping RPC traffic reachable across tunnelled networks:
 
-![Request successes and failures](https://images.ebornet.com/uploads/big/5bce5df617258d7db54c04f9a2927e6b.png)
+![Request successes and failures](https://i.doge.at/uploads/big/5bce5df617258d7db54c04f9a2927e6b.png)
 
 _No requests with encapsulated packets timed out when travelling through WireGuard under periodic polling._
 
-![Request timings](https://images.ebornet.com/uploads/big/951795a8bf78b9e3b42228952a6450eb.png)
+![Request timings](https://i.doge.at/uploads/big/951795a8bf78b9e3b42228952a6450eb.png)
 
 _Polling requests provide useful timing data on inter-node RPCs._
 

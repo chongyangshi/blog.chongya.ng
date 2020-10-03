@@ -4,7 +4,7 @@ Category: Tutorial
 
 Out of boredom, I decided to undertake an infrastructural experiment of setting up a personal [Kubernetes](https://kubernetes.io) cluster, and moving as much of my personal project workloads into the cluster as possible. The purpose of this exercise was _not_ to improve the resiliency of these fairly inconsequential workloads, but rather to see how far I could go in stretching this setup to fit low-cost servers I acquired from some infamous European providers. 
 
-![Architecture of personal Kubernetes cluster](https://images.ebornet.com/uploads/big/61a580ae16a9c3463ad3066b95d31d9e.png)
+![Architecture of personal Kubernetes cluster](https://i.doge.at/uploads/big/61a580ae16a9c3463ad3066b95d31d9e.png)
 
 It took some trial and errors over a couple weeks of time, but eventually I was able to achieve a setup that is functional and reasonably painless to maintain.
 
