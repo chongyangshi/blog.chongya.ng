@@ -1,6 +1,6 @@
 Title: Running a personal Kubernetes cluster with Calico-connected services on bare-metal 
 Date: 2019-06-09 18:00
-Category: Tutorial
+Category: Technical
 
 Out of boredom, I decided to undertake an infrastructural experiment of setting up a personal [Kubernetes](https://kubernetes.io) cluster, and moving as much of my personal project workloads into the cluster as possible. The purpose of this exercise was _not_ to improve the resiliency of these fairly inconsequential workloads, but rather to see how far I could go in stretching this setup to fit low-cost servers I acquired from some infamous European providers. 
 

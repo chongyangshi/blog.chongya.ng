@@ -1,6 +1,6 @@
 Title: Mixed IKEv2 / IKEv1 Cisco IPSec VPN Server with No User Certificates
 Date: 2016-11-20 00:26
-Category: Tutorial
+Category: Technical
 
 Also known as: **Moving on from racoon to strongSwan, with back compatibility**.
 
