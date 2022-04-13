@@ -32,7 +32,7 @@ hack:
 	rm $(BASEDIR)/output/theme/css/pygment.css
 
 docker-build: publish hack
-	docker build -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} . 
+	docker buildx build --platform linux/amd64 -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} . 
 
 docker-pull:
 	docker pull alpine:${ALPINE_VERSION}
