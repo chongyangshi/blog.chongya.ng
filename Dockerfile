@@ -1,5 +1,5 @@
 ARG ALPINE_VERSION=3.15
-ARG NGINX_VERSION=1.21
+ARG NGINX_VERSION=1.21.6
 FROM alpine:$ALPINE_VERSION
 
 RUN apk --update add pcre libbz2 ca-certificates libressl && rm /var/cache/apk/*
