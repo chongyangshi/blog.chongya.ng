@@ -1,5 +1,5 @@
 .PHONY: docker-build
-ALPINE_VERSION := 3.11
+ALPINE_VERSION := 3.15
 SVC := web-blog-scy-email
 COMMIT := $(shell git log -1 --pretty='%h')
 
@@ -32,7 +32,7 @@ hack:
 	rm $(BASEDIR)/output/theme/css/pygment.css
 
 docker-build: publish hack
-	docker build -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} .
+	docker build -t ${SVC} --build-arg ALPINE_VERSION=${ALPINE_VERSION} . 
 
 docker-pull:
 	docker pull alpine:${ALPINE_VERSION}
