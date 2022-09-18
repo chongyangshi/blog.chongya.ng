@@ -20,7 +20,7 @@ AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 
 # Blogroll
-LINKS = (('Author\'s Profile', 'https://scy.email/'),)
+LINKS = (('Author\'s Profile', 'https://chongya.ng/'),)
 
 # Social widget
 SOCIAL = ()

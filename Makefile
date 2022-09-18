@@ -1,6 +1,6 @@
 .PHONY: docker-build
 ALPINE_VERSION := 3.15
-SVC := web-blog-scy-email
+SVC := web-blog-chongya-ng
 COMMIT := $(shell git log -1 --pretty='%h')
 
 PELICAN=pelican

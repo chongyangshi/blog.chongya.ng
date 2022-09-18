@@ -1,18 +1,18 @@
 apiVersion: apps/v1 
 kind: Deployment
 metadata:
-  name: web-blog-scy-email
+  name: web-blog-chongya-ng
   labels:
-    app: web-blog-scy-email  
+    app: web-blog-chongya-ng  
 spec:
   selector:
     matchLabels:
-      app: web-blog-scy-email 
+      app: web-blog-chongya-ng 
   replicas: 3 
   template: 
     metadata:
       labels:
-        app: web-blog-scy-email     
+        app: web-blog-chongya-ng    
     spec:
       containers:
         - name: nginx

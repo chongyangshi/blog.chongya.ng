@@ -17,7 +17,7 @@ Two servers are used in the setup:
     * Ubuntu guest images were built with [Cloud-Init](https://cloudinit.readthedocs.io/en/latest/) and runs in DHCP mode.
 
 * An **auxiliary server**, a low-cost yet fairly powerful virtual machine hosted with a different provider.
-    * It was originally intended to be set up as an off-site Kubernetes worker node connected into the main cluster via WireGuard. While I managed to get kubelet joining the master node successfully and its [Calico](https://www.projectcalico.org/) node reaching the main cluster network, I ran into some weird issues with [send/receive offloading](https://en.wikipedia.org/wiki/Large_send_offload) causing longer-than-MTU pod traffic packets to be dropped on Calico over WireGuard, and ~~had to abandon this idea.~~ **Update: I have spent more time looking into this and implemented a partial workaround, see the [updated post](https://blog.scy.email/running-a-low-cost-distributed-kubernetes-cluster-on-bare-metal-with-wireguard.html).**
+    * It was originally intended to be set up as an off-site Kubernetes worker node connected into the main cluster via WireGuard. While I managed to get kubelet joining the master node successfully and its [Calico](https://www.projectcalico.org/) node reaching the main cluster network, I ran into some weird issues with [send/receive offloading](https://en.wikipedia.org/wiki/Large_send_offload) causing longer-than-MTU pod traffic packets to be dropped on Calico over WireGuard, and ~~had to abandon this idea.~~ **Update: I have spent more time looking into this and implemented a partial workaround, see the [updated post](https://blog.chongya.ng/running-a-low-cost-distributed-kubernetes-cluster-on-bare-metal-with-wireguard.html).**
     * The auxiliary server runs workloads which are tricky to containerise, including my private Docker build environment and container repository (major `iptables` screw-up) and MySQL for backing some legacy projects. 
 
 * [WireGuard]([https://www.wireguard.com/](https://www.wireguard.com/)) runs as a virtualised bridge between this and the auxiliary server hosted elsewhere.
@@ -38,9 +38,9 @@ Some infrastructural notes for the setup:
 
 For each of my existing personal projects, I wrote `Dockerfile`s and supporting `Makefile`s to enable them to be containerised. These mostly run with three replicas for load-balancing. These projects include:
 
-* [My personal page](https://scy.email) which is now served by an [NGINX/Alpine container](https://github.com/chongyangshi/scy.email) deployment.
+* [My personal page](https://chongya.ng) which is now served by an [NGINX/Alpine container](https://github.com/chongyangshi/chongya.ng) deployment.
 
-* [My personal blog](https://blog.scy.email) (the site you are reading now) which is now served by another [NGINX/Alpine container](https://github.com/chongyangshi/blog.scy.email) deployment.
+* [My personal blog](https://blog.chongya.ng) (the site you are reading now) which is now served by another [NGINX/Alpine container](https://github.com/chongyangshi/blog.chongya.ng) deployment.
 
 * The [documentation site](https://covertmark.com) for my Master's dissertation project CovertMark, which is now served by yet another [NGINX/Alpine container](https://github.com/chongyangshi/CovertMark/tree/master/doc) deployment.
 

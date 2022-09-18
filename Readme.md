@@ -1,4 +1,4 @@
-# blog.scy.email
+# blog.chongya.ng
 
 Statically-generated personal blog. It now runs as a Kubernetes service in a Docker conatiner.
 
